@@ -37,20 +37,32 @@ fs.outputFileSync('./template/svelte.config.js',
             files: {
                 routes: 'src/pages',
                 lib: 'src/components'
-            },
-            vite: {
-                optimizeDeps: {
-                    include: ['echarts-stat', 'export-to-csv', 'ssf', 'downloadjs'],
-                    exclude: ['@evidence-dev/components']
-                },
-                ssr: {
-                    external: ['@evidence-dev/db-orchestrator', 'git-remote-origin-url', '@evidence-dev/telemetry']
-                }
             }
         }
     };
     
     export default config    
+    `
+)
+
+// Create a clean Vite config (workspace's is modified)
+// TODO: find better alternative to ssr.format = "cjs"
+fs.outputFileSync('./template/vite.config.js',
+    `
+    import { sveltekit } from '@sveltejs/kit/vite';
+
+    const config = {
+        plugins: [sveltekit()],
+        optimizeDeps: {
+            include: ['echarts-stat', 'export-to-csv', 'ssf', 'downloadjs'],
+            exclude: ['@evidence-dev/components']
+        },
+        ssr: {
+            format: "cjs"
+        }
+    };
+
+    export default config;
     `
 )
 
