@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { json } from "@sveltejs/kit";
 
 const CUSTOMIZATION_DIRECTORY = "../customization";
 const CUSTOM_FORMATTING_SETTINGS_PATH = `${CUSTOMIZATION_DIRECTORY}/custom-formatting.json`;
@@ -8,7 +9,8 @@ const DEFAULT_CUSTOM_FORMATTING_SETTINGS = {
   customFormats: [],
 };
 
-export async function get() {
+/** @type {import('./$types').RequestHandler} */
+export async function GET() {
   let customFormattingSettings = {};
   try {
     customFormattingSettings = getCustomFormattingSettings() || customFormattingSettings;
@@ -16,15 +18,12 @@ export async function get() {
     // custom settings will be empty for now.
   }
   let result = { customFormattingSettings };
-  return {
-    header: "accept: application/json",
-    status: 200,
-    body: result,
-  };
+  return json(result);
 }
 
-export function post(request) {
-  const { newCustomFormat } = JSON.parse(request.body);
+/** @type {import('./$types').RequestHandler} */
+export async function POST({ request }) {
+  const { newCustomFormat } = await request.json();
 
   let customFormattingSettings = getCustomFormattingSettings() || {};
 
@@ -37,11 +36,12 @@ export function post(request) {
     }
     saveCustomFormattingSettings(customFormattingSettings);
   }
-  return { body: customFormattingSettings };
+  return new Response(customFormattingSettings);
 }
 
-export function del(request) {
-  const { formatTag } = JSON.parse(request.body);
+/** @type {import('./$types').RequestHandler} */
+export async function DELETE({ request }) {
+  const { formatTag } = await request.json();
   let customFormattingSettings = getCustomFormattingSettings() || {};
   if (formatTag) {
     if (!customFormattingSettings.customFormats) {
@@ -55,7 +55,7 @@ export function del(request) {
     }
     saveCustomFormattingSettings(customFormattingSettings);
   }
-  return { body: customFormattingSettings };
+  return new Response(customFormattingSettings);
 }
 
 function getCustomFormattingSettings() {

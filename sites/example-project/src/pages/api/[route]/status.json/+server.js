@@ -1,6 +1,8 @@
+import { json } from '@sveltejs/kit';
 import fs from 'fs';
 
-export async function get({params}) {
+/** @type {import('./$types').RequestHandler} */
+export async function GET({params}) {
   const { route } = params;
   let status = []
   let queries
@@ -12,9 +14,5 @@ export async function get({params}) {
     });
   }   
 
-  return {
-      body: {
-        status
-      }
-  };
+  return json({ status })
 }

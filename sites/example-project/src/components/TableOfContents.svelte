@@ -5,7 +5,7 @@
 </script>
 
 <div class="container">
-  {#if !$navigating && $page.path !== '/settings'}
+  {#if !$navigating && $page.url.href !== '/settings'}
     <ContentsList/>
   {/if}
 </div>

@@ -115,10 +115,9 @@
 
 <script>
 	import "../app.css"
-	import { navigating } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import { blur } from "svelte/transition";
-	import { page } from "$app/stores";
-	import {dev} from '$app/env'
+	import { dev } from '$app/environment'
 
 	import TableOfContents from "@evidence-dev/components/TableOfContents.svelte";
 	import Header from '@evidence-dev/components/ui/Header.svelte'
@@ -140,7 +139,7 @@
 {/if}
 
 <div class="grid">
-	{#if $page.path !== '/settings'}
+	{#if $page.url.href !== '/settings'}
 		<div class="header-bar">
 			<Header {menu} {folderList}/>
 			<Hamburger bind:open/>
@@ -148,8 +147,8 @@
 	{/if}
 	<Sidebar bind:open {menu} {folderList}/>
 	<main in:blur|local>
-	  <div class=content class:settings-content={$page.path === '/settings'}>
-		<article class:settings-article={$page.path === '/settings'}>
+	  <div class=content class:settings-content={$page.url.href === '/settings'}>
+		<article class:settings-article={$page.url.href === '/settings'}>
 			<slot/>
 			<p>&nbsp;</p>
 		</article>

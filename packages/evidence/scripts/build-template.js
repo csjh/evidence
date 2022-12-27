@@ -8,8 +8,7 @@ const templatePaths = [
     'src/app.css',
     'src/app.html',
     'src/global.d.ts',
-    'src/pages/index.md',
-    'src/pages/__layout.svelte',
+    'src/pages/+layout.svelte',
     'src/pages/settings/',
     'src/pages/api/',
     'src/components/'
@@ -20,6 +19,12 @@ fs.emptyDirSync("./template/")
 templatePaths.forEach(p => {
     fs.copySync(path.join("../../sites/example-project", p), path.join("./template", p))
 })
+
+fs.copySync(path.join("../../sites/example-project", "src/pages/index.md"), path.join("./template", "src/pages/+page.md"))
+
+
+// make sure every page is prerendered
+fs.outputFileSync("./template/src/pages/+layout.js", "export const prerender = true")
 
 // Create a clean SK config (workspace's is modified)
 fs.outputFileSync('./template/svelte.config.js', 
@@ -33,7 +38,9 @@ fs.outputFileSync('./template/svelte.config.js',
         extensions: ['.svelte', ".md"],
         preprocess: evidencePreprocess(),
         kit: {
-            adapter: adapter(),
+            adapter: adapter({
+                strict: false
+            }),
             files: {
                 routes: 'src/pages',
                 lib: 'src/components'
